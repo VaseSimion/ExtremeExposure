@@ -1,19 +1,15 @@
 import random
 
 def getauthor(url):
-    if 'by' in url.split('-'):
-        authorlist=url.split('-')[url.split('-').index('by')+1:]
-        print(authorlist)
-        temporaryauthorlist=[]
-        for name in authorlist:
-            if "?" not in name:
-                temporaryauthorlist.append(name)
-            else:
-                temporaryauthorlist += name.split('-')[0]
-
+    print(url)
+    url = url[url.index("by-")+3:]
+    url = url[:url.index("?")-1]
+    authorlist = url.split('-')
+    temporaryauthorlist=[]
+    for name in authorlist:
+        if "%" not in name:
+            temporaryauthorlist.append(name)
         author = " ".join(temporaryauthorlist)
-    else:
-        author=""
     print(author)
     return author
 
@@ -35,6 +31,7 @@ def getcomment(topic, author):
         comment += random.choice(first_part_comment).lower()
         comment += random.choice(second_part_comment)
     if author == "":
-        return comment
+        return comment + "!"
     else:
-        comment += (", " + author + "!")
+        comment += (", " + author.split(" ")[0] + "!")
+        return comment
