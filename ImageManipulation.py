@@ -6,7 +6,7 @@ def get_resized_screenshot():
     desired_size = 256
     pyautogui.screenshot("screenshot.png")
     image = cv2.imread("screenshot.png")
-    image = image[130:880, 220:1720]
+    image = image[130:880, 520:1420]
 
     old_size = image.shape[:2]  # old_size is in (height, width) format
     ratio = float(desired_size)/max(old_size)

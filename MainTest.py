@@ -14,23 +14,24 @@ pyautogui.moveTo(x=159, y=489, duration=2)
 pyautogui.click()
 time.sleep(3)
 
-for i in range(2):
+for i in range(5):
     # like this photo
     pyautogui.moveTo('Button.png')  # Find where heart appears on the screen and click it.
     time.sleep(random.random())
     pyautogui.click()
 
-    # generate a comment
-    pyautogui.press('f6')   # press the right arrow key
-    time.sleep(0.5)
-    pyautogui.hotkey('ctrl', 'c')
-    time.sleep(0.5)
-    author = Cmg.getauthor(clipboard.paste())
-    comment = Cmg.getcomment("fluff", author)
-    print(comment)
-
     # write the comment
-    if True:  # 10*random.random() < 4:
+    if 10*random.random() < 3:
+        # generate a comment
+        pyautogui.press('f6')  # press the right arrow key
+        time.sleep(0.5)
+        pyautogui.hotkey('ctrl', 'c')
+        time.sleep(0.5)
+        author = Cmg.getauthor(clipboard.paste())
+        comment = Cmg.getcomment("fluff", author)
+        print(comment)
+
+        # write it
         pyautogui.scroll(-400)
         time.sleep(1+random.random())
         pyautogui.moveTo('comment_box.png')  # Find where heart appears on the screen and click it.
@@ -45,9 +46,9 @@ for i in range(2):
 
         pyautogui.scroll(500)
         time.sleep(random.random())
-
+    else:
+        time.sleep(1 + random.random())
     # changing to next photo
-    pyautogui.click(x=200, y=900, duration=1 + random.random())
     pyautogui.press('right')   # press the right arrow key
     pyautogui.moveTo(x=159, y=489, duration=3 + 2*random.random())
 
