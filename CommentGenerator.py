@@ -2,7 +2,8 @@ import random
 
 def getauthor(url):
     print(url)
-    url = url[url.index("by-")+3:]
+    while "by-" in url:
+        url = url[url.index("by-")+3:]
     url = url[:url.index("?")]
     authorlist = url.split('-')
     temporaryauthorlist=[]

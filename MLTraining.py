@@ -1,14 +1,6 @@
 # this is made for training the model based on Microsoft training on EDx
 import os
-import sys
-import keras
 from keras.preprocessing.image import ImageDataGenerator
-from keras import backend as K
-# Define a CNN classifier network
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import Activation, Flatten, Dense
-from keras import optimizers
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
@@ -24,11 +16,11 @@ img_size = (128, 128)
 classes = sorted(os.listdir(training_folder_name))
 print(classes)
 
-batch_size = 30
+batch_size = 10
 
 print("Getting Data...")
 datagen = ImageDataGenerator(rescale=1./255, # normalize pixel values
-                             validation_split=0.3) # hold back 30% of the images for validation
+                             validation_split=0.2) # hold back 30% of the images for validation
 
 print("Preparing training dataset...")
 train_generator = datagen.flow_from_directory(
@@ -46,44 +38,36 @@ validation_generator = datagen.flow_from_directory(
     class_mode='categorical',
     subset='validation')  # set as validation data
 
-checkpoint_path = "ModelChkp/cp.ckpt"
-cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, save_weights_only=True, verbose=1, period=1)
-
 # Define the model as a sequence of layers
-model = Sequential()
+model = tf.keras.models.Sequential()
 
-# The input layer accepts an image and applies a convolution that uses 32 6x6 filters and a rectified linear unit activation function
-model.add(Conv2D(50, (25, 25), input_shape=train_generator.image_shape, activation='relu'))
+model.add(tf.keras.layers.Conv2D(50, (3, 3),  input_shape=train_generator.image_shape, activation='relu'))
+model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
 
-# Next we'll add a max pooling layer with a 2x2 patch
-model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(tf.keras.layers.Flatten())
 
-# We can add as many layers as we think necessary - here we'll add another convolution layer and another and max poolinglayer
-model.add(Dense(100, activation='relu'))
+model.add(tf.keras.layers.Dense(40, activation='relu'))
+model.add(tf.keras.layers.LeakyReLU(alpha=0.1))
 
-# We can add as many layers as we think necessary - here we'll add another convolution layer and another and max poolinglayer
-model.add(Dense(40, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.6, noise_shape=None, seed=None))
 
-# We can add as many layers as we think necessary - here we'll add another convolution layer and another and max poolinglayer
-model.add(Dense(20, activation='relu'))
+model.add(tf.keras.layers.Dense(20, activation='relu'))
+model.add(tf.keras.layers.LeakyReLU(alpha=0.1))
 
-# Now we'll flatten the feature maps and generate an output layer with a predicted probability for each class
-model.add(Flatten())
-model.add(Dense(train_generator.num_classes, activation='softmax'))
+model.add(tf.keras.layers.Dense(train_generator.num_classes, activation='softmax'))
 
-# We'll use the ADAM optimizer
-opt = optimizers.Adam(lr=0.001)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# With the layers defined, we can now compile the model for categorical (multi-class) classification
-model.compile(loss='categorical_crossentropy',
-              optimizer=opt,
-              metrics=['accuracy'])
+checkpoint_path = "CategoryChkp/cp.ckpt"
+best_model_path = "SavedModels/BestCategoryModel.h5"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, save_weights_only=True, verbose=1, period=2)
 
 print(model.summary())
 
 model.load_weights(checkpoint_path)
 
-num_epochs = 5
+num_epochs = 30
 history = model.fit_generator(
     train_generator,
     steps_per_epoch = train_generator.samples // batch_size,
@@ -121,7 +105,10 @@ true_labels = np.argmax(y_test, axis=1)
 
 # Plot the confusion matrix
 cm = confusion_matrix(true_labels, predictions)
-plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
+try:
+    plt.imshow(cm, interpolation="nearest", cmap='gray')
+except:
+    plt.imshow(cm, interpolation="nearest")
 plt.colorbar()
 tick_marks = np.arange(len(classes))
 plt.xticks(tick_marks, classes, rotation=85)

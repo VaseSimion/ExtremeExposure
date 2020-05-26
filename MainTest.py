@@ -12,17 +12,30 @@ import clipboard
 old_author = "Johnny Karate"
 for i in range(100):
     # open 500px and go to the newest photo
-    subprocess.call("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe https://500px.com/fresh")
+    subprocess.call("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe https://500px.com/upcoming")
     time.sleep(8)
     pyautogui.moveTo(x=159, y=489, duration=2)
     pyautogui.click()
     time.sleep(3)
-    
-    for j in range(50):
-        # like this photo
+    try:
         pyautogui.moveTo('Button.png')  # Find where heart appears on the screen and click it.
         time.sleep(random.random())
+    except:
+        time.sleep(10 + 5*random.random())
+        pyautogui.moveTo(x=159, y=489, duration=2)
         pyautogui.click()
+        time.sleep(3)
+
+    for j in range(50):
+        # like this photo
+        try:
+            pyautogui.moveTo('Button.png')  # Find where heart appears on the screen and click it.
+            time.sleep(random.random())
+            pyautogui.click()
+        except:
+            pyautogui.press('right')  # press the right arrow key
+            pyautogui.moveTo(x=159, y=489, duration=3 + 2 * random.random())
+            continue
 
         # write the comment
         if 10*random.random() < 3:
