@@ -2,6 +2,12 @@ import os
 from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
 from keras import applications
+from keras import Model
+from keras.layers import Flatten, Dense
+from keras import optimizers
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import numpy as np
 
 # The images are in a folder named 'shapes/training'
 training_folder_name = "C:/Users/sular/Desktop/DatasetMess"
@@ -34,12 +40,9 @@ validation_generator = datagen.flow_from_directory(
     subset='validation') # set as validation data
 
 
-start_from_Imnet = True
+start_from_Imnet = True  # This will change between locally trained model or start with the one from Imnet Database
+change_last_layer = False
 if start_from_Imnet:
-    from keras import Model
-    from keras.layers import Flatten, Dense
-    from keras import optimizers
-
     #Load the base model, not including its final connected layer, and set the input shape to match our images
     base_model = applications.vgg16.VGG16(weights='imagenet', include_top=False, input_shape=train_generator.image_shape)
 
@@ -52,11 +55,24 @@ if start_from_Imnet:
     x = Flatten()(x)
     prediction_layer = Dense(len(classes), activation='sigmoid')(x)
     model = Model(inputs=base_model.input, outputs=prediction_layer)
+elif change_last_layer:
+    #Load the base model, not including its final connected layer, and set the input shape to match our images
+    base_model = tf.keras.models.load_model("ModelLocal.h5")
+
+    # Freeze the already-trained layers in the base model
+    for layer in base_model.layers:
+        layer.trainable = False
+
+    # Create layers for classification of our images
+    x = base_model.output
+    x = Flatten()(x)
+    prediction_layer = Dense(len(classes), activation='sigmoid')(x)
+    model = Model(inputs=base_model.input, outputs=prediction_layer)
 else:
+    # load model saved locally in previous run
     model = tf.keras.models.load_model("ModelLocal.h5")
     for layer in model.layers[:-1]:
         layer.trainable = False
-
 
 # Compile the model
 opt = tf.keras.optimizers.Adam(lr=0.001)
@@ -76,10 +92,6 @@ history = model.fit_generator(
 
 model.save("ModelLocal.h5")
 
-from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
-import numpy as np
-
 epoch_nums = range(1,num_epochs+1)
 training_loss = history.history["loss"]
 validation_loss = history.history["val_loss"]
@@ -90,8 +102,6 @@ plt.ylabel('loss')
 plt.legend(['training', 'validation'], loc='upper right')
 plt.show()
 
-
-
 print("Generating predictions from validation data...")
 x_test = validation_generator[0][0]
 y_test = validation_generator[0][1]
@@ -100,10 +110,8 @@ class_probabilities = model.predict(x_test)
 predictions = np.argmax(class_probabilities, axis=1)
 true_labels = np.argmax(y_test, axis=1)
 cm = confusion_matrix(true_labels, predictions)
-try:
-    plt.imshow(cm, interpolation="nearest", cmap='gray')
-except:
-    plt.imshow(cm, interpolation="nearest")
+
+plt.imshow(cm, interpolation="nearest", cmap='gray')
 plt.colorbar()
 tick_marks = np.arange(len(classes))
 plt.xticks(tick_marks, classes, rotation=85)

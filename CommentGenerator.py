@@ -18,11 +18,15 @@ def getauthor(url):
 def getcomment(topic, author):
     first_part_comment = ["Awesome ", "Amazing ", "Excellent ", "Stunning ", "Cool ", "Lovely ", "Wonderful ",
                           "Superb ", "Spectacular ", "Great ", "Fantastic ", "Nice ", "Impressive ", "Fabulous ",
-                          "Splendid ", "Captivating "]
+                          "Splendid ", "Captivating ", "Formidable ", "Enchanting "]
 
-    special_first_part = ["What a ", "Love this ", "Daaaamn, ", "", "", ""]
+    special_first_part = ["What a ", "Love this ", "Daaaamn, ", "", "", "", "", "", "", "", "", "", ""]
 
-    second_part_comment = ["image", "photo", "shot", "work", "picture", "frame", "snapshot"]
+    second_part_comment = ["image", "photo", "shot", "work", "picture", "frame", "snapshot", "composition", "capture",
+                           "scene"]
+
+    third_part_comment = [" Congrats!", " Congratulations!", " Good job!", " Well taken!", "", "", "", "", "", "", "",
+                          "", ""]
 
     comment = random.choice(special_first_part)
     if comment == "":
@@ -32,7 +36,7 @@ def getcomment(topic, author):
         comment += random.choice(first_part_comment).lower()
         comment += random.choice(second_part_comment)
     if author == "":
-        return comment + "!"
+        return comment + "!" + random.choice(third_part_comment)
     else:
-        comment += (", " + author.split(" ")[0] + "!")
+        comment += (", " + author.split(" ")[0] + "!" + random.choice(third_part_comment))
         return comment

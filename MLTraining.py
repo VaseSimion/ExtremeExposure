@@ -1,11 +1,11 @@
 # this is made for training the model based on Microsoft training on EDx
+# It will make a model and train it based on the pictures in training folder
 import os
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import tensorflow as tf
-
 
 training_folder_name = "C:/Users/sular/Desktop/Dataset"
 
@@ -20,7 +20,7 @@ batch_size = 10
 
 print("Getting Data...")
 datagen = ImageDataGenerator(rescale=1./255, # normalize pixel values
-                             validation_split=0.2) # hold back 30% of the images for validation
+                             validation_split=0.2) # hold back 20% of the images for validation
 
 print("Preparing training dataset...")
 train_generator = datagen.flow_from_directory(
@@ -59,15 +59,13 @@ model.add(tf.keras.layers.Dense(train_generator.num_classes, activation='softmax
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 checkpoint_path = "CategoryChkp/cp.ckpt"
-best_model_path = "SavedModels/BestCategoryModel.h5"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, save_weights_only=True, verbose=1, period=2)
 
 print(model.summary())
-
 model.load_weights(checkpoint_path)
 
-num_epochs = 30
+num_epochs = 1
 history = model.fit_generator(
     train_generator,
     steps_per_epoch = train_generator.samples // batch_size,
@@ -76,7 +74,7 @@ history = model.fit_generator(
     epochs = num_epochs,
     callbacks=[cp_callback])
 
-epoch_nums = range(1,num_epochs+1)
+epoch_nums = range(1, num_epochs+1)
 training_loss = history.history["loss"]
 validation_loss = history.history["val_loss"]
 plt.plot(epoch_nums, training_loss)
@@ -86,14 +84,12 @@ plt.ylabel('loss')
 plt.legend(['training', 'validation'], loc='upper right')
 plt.show()
 
-
-
 print("Generating predictions from validation data...")
 # Get the image and label arrays for the first batch of validation data
 x_test = validation_generator[0][0]
 y_test = validation_generator[0][1]
 
-# Use the moedl to predict the class
+# Use the model to predict the class
 class_probabilities = model.predict(x_test)
 
 # The model returns a probability value for each class
@@ -105,10 +101,9 @@ true_labels = np.argmax(y_test, axis=1)
 
 # Plot the confusion matrix
 cm = confusion_matrix(true_labels, predictions)
-try:
-    plt.imshow(cm, interpolation="nearest", cmap='gray')
-except:
-    plt.imshow(cm, interpolation="nearest")
+
+plt.imshow(cm, interpolation="nearest", cmap='gray')
+
 plt.colorbar()
 tick_marks = np.arange(len(classes))
 plt.xticks(tick_marks, classes, rotation=85)
