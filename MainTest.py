@@ -6,8 +6,11 @@ import ImageManipulation as Imp
 import CommentGenerator as Cmg
 import random
 import clipboard
+import tensorflow as tf
+import numpy as np
 
 
+model = tf.keras.models.load_model("ModelLocal.h5")
 old_author = "Johnny Karate"
 for i in range(100):
     # open 500px and go to the newest photo
@@ -69,6 +72,24 @@ for i in range(100):
             old_author = author
         else:
             time.sleep(1 + random.random())
+
+        #try it on pictures
+        image = Imp.get_resized_screenshot()
+        prepared_image = image[np.newaxis, ...]
+        prediction_list = model.predict([prepared_image])[0]
+        if Imp.decode(prediction_list) == "Landscape":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Landscape/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[1]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Cityscape":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Cityscape/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[0]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Portrait":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Portrait/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[2]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Uncategorised":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Uncategorised/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[3]) + ".jpg", image)
+
         # changing to next photo
         pyautogui.press('right')   # press the right arrow key
         pyautogui.moveTo(x=159, y=489, duration=3 + 2*random.random())

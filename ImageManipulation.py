@@ -3,10 +3,10 @@ import pyautogui
 
 
 def get_resized_screenshot():
-    desired_size = 256
+    desired_size = 224
     pyautogui.screenshot("screenshot.png")
     image = cv2.imread("screenshot.png")
-    image = image[130:880, 520:1420]
+    image = image[120:760, 440:1440]
 
     old_size = image.shape[:2]  # old_size is in (height, width) format
     ratio = float(desired_size)/max(old_size)
@@ -38,3 +38,18 @@ def resize_picture_to_square(picture, size):
     color = [0, 0, 0]
     image = cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
     return image
+
+def decode(predictions):
+    predictions = [float(round(x, 1)) for x in predictions]
+    if max(predictions) < 0.8:
+        return "Not sure what is here"
+    if predictions.index(max(predictions)) == 0:
+        return "Cityscape"
+    elif predictions.index(max(predictions)) == 1:
+        return "Landscape"
+    elif predictions.index(max(predictions)) == 2:
+        return "Portrait"
+    elif predictions.index(max(predictions)) == 3:
+        return "Uncategorised"
+    else:
+        return "Somehting went wrong"

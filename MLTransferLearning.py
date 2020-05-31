@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # The images are in a folder named 'shapes/training'
-training_folder_name = "C:/Users/sular/Desktop/DatasetMess"
+training_folder_name = "C:/Users/sular/PycharmProjects/ExtremeExposure/miniDataset"
 
 # The folder contains a subfolder for each class of shape
 classes = sorted(os.listdir(training_folder_name))
 print(classes)
 
-pretrained_size = (224,224)
+pretrained_size = (224, 224)
 batch_size = 10
 
 print("Getting Data...")
@@ -41,7 +41,6 @@ validation_generator = datagen.flow_from_directory(
 
 
 start_from_Imnet = True  # This will change between locally trained model or start with the one from Imnet Database
-change_last_layer = False
 if start_from_Imnet:
     #Load the base model, not including its final connected layer, and set the input shape to match our images
     base_model = applications.vgg16.VGG16(weights='imagenet', include_top=False, input_shape=train_generator.image_shape)
@@ -53,20 +52,7 @@ if start_from_Imnet:
     # Create layers for classification of our images
     x = base_model.output
     x = Flatten()(x)
-    prediction_layer = Dense(len(classes), activation='sigmoid')(x)
-    model = Model(inputs=base_model.input, outputs=prediction_layer)
-elif change_last_layer:
-    #Load the base model, not including its final connected layer, and set the input shape to match our images
-    base_model = tf.keras.models.load_model("ModelLocal.h5")
-
-    # Freeze the already-trained layers in the base model
-    for layer in base_model.layers:
-        layer.trainable = False
-
-    # Create layers for classification of our images
-    x = base_model.output
-    x = Flatten()(x)
-    prediction_layer = Dense(len(classes), activation='sigmoid')(x)
+    prediction_layer = Dense(len(classes), activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=prediction_layer)
 else:
     # load model saved locally in previous run
@@ -82,7 +68,7 @@ model.compile(loss='categorical_crossentropy',
 
 print(model.summary())
 
-num_epochs = 1
+num_epochs = 2
 history = model.fit_generator(
     train_generator,
     steps_per_epoch = train_generator.samples // batch_size,
