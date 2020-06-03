@@ -41,15 +41,17 @@ def resize_picture_to_square(picture, size):
 
 def decode(predictions):
     predictions = [float(round(x, 1)) for x in predictions]
-    if max(predictions) < 0.8:
-        return "Not sure what is here"
     if predictions.index(max(predictions)) == 0:
-        return "Cityscape"
+        return "Animal"
     elif predictions.index(max(predictions)) == 1:
-        return "Landscape"
+        return "Cityscape"
     elif predictions.index(max(predictions)) == 2:
-        return "Portrait"
+        return "Flower"
     elif predictions.index(max(predictions)) == 3:
-        return "Uncategorised"
+        return "Landscape"
+    elif predictions.index(max(predictions)) == 4:
+        return "Portrait"
+    elif predictions.index(max(predictions)) == 5:
+        return "Unknown"
     else:
         return "Somehting went wrong"

@@ -79,17 +79,22 @@ for i in range(100):
         prediction_list = model.predict([prepared_image])[0]
         if Imp.decode(prediction_list) == "Landscape":
             cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Landscape/sample" + str(50*i + j) + " " +
-                        str(random.random()) + " " + str(prediction_list[1]) + ".jpg", image)
+                        str(random.random()) + " " + str(prediction_list[3]) + ".jpg", image)
         elif Imp.decode(prediction_list) == "Cityscape":
             cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Cityscape/sample" + str(50*i + j) + " " +
-                        str(random.random()) + " " + str(prediction_list[0]) + ".jpg", image)
+                        str(random.random()) + " " + str(prediction_list[1]) + ".jpg", image)
         elif Imp.decode(prediction_list) == "Portrait":
             cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Portrait/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[4]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Unknown":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Unknown/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[5]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Animal":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Animal/sample" + str(50*i + j) + " " +
+                        str(random.random()) + " " + str(prediction_list[0]) + ".jpg", image)
+        elif Imp.decode(prediction_list) == "Flower":
+            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Flower/sample" + str(50 * i + j) + " " +
                         str(random.random()) + " " + str(prediction_list[2]) + ".jpg", image)
-        elif Imp.decode(prediction_list) == "Uncategorised":
-            cv2.imwrite("C:/Users/sular/Desktop/ExperimentalStuff/Uncategorised/sample" + str(50*i + j) + " " +
-                        str(random.random()) + " " + str(prediction_list[3]) + ".jpg", image)
-
         # changing to next photo
         pyautogui.press('right')   # press the right arrow key
         pyautogui.moveTo(x=159, y=489, duration=3 + 2*random.random())

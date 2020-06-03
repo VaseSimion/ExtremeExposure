@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # The images are in a folder named 'shapes/training'
-training_folder_name = "C:/Users/sular/PycharmProjects/ExtremeExposure/miniDataset"
+training_folder_name = "C:/Users/sular/PycharmProjects/ExtremeExposure/Dataset"
 
 # The folder contains a subfolder for each class of shape
 classes = sorted(os.listdir(training_folder_name))
@@ -40,7 +40,7 @@ validation_generator = datagen.flow_from_directory(
     subset='validation') # set as validation data
 
 
-start_from_Imnet = True  # This will change between locally trained model or start with the one from Imnet Database
+start_from_Imnet = False  # This will change between locally trained model or start with the one from Imnet Database
 if start_from_Imnet:
     #Load the base model, not including its final connected layer, and set the input shape to match our images
     base_model = applications.vgg16.VGG16(weights='imagenet', include_top=False, input_shape=train_generator.image_shape)
@@ -68,7 +68,7 @@ model.compile(loss='categorical_crossentropy',
 
 print(model.summary())
 
-num_epochs = 2
+num_epochs = 1
 history = model.fit_generator(
     train_generator,
     steps_per_epoch = train_generator.samples // batch_size,
@@ -91,6 +91,8 @@ plt.show()
 print("Generating predictions from validation data...")
 x_test = validation_generator[0][0]
 y_test = validation_generator[0][1]
+
+print(len(validation_generator))
 
 class_probabilities = model.predict(x_test)
 predictions = np.argmax(class_probabilities, axis=1)
