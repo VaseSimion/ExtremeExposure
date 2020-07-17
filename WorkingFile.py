@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 model = tf.keras.models.load_model("ModelLocal.h5")
-file_path = "C:/Users/sular/PycharmProjects/ExtremeExposure/Dataset/Uncategorised"
+file_path = "C:/Users/sular/PycharmProjects/ExtremeExposure/Dataset/Unknown"
 
 
 for root, folders, filenames in os.walk(file_path, topdown=False):
@@ -16,9 +16,9 @@ for root, folders, filenames in os.walk(file_path, topdown=False):
         prepared_image = prepared_image[np.newaxis, ...]
         predictionlist = model.predict([prepared_image])[0]
         print(file_path2 + " " + str([round(x, 2) for x in predictionlist]))
-        if Imp.decode(predictionlist) == "Animal":   # first folder
+        if Imp.decode(predictionlist) == "Cityscape":   # first folder
             cv2.imwrite(os.path.join(root, "Animal", file), image)
-        elif Imp.decode(predictionlist) == "Flower":  # second folder
+        elif Imp.decode(predictionlist) == "Landscape":  # second folder
             cv2.imwrite(os.path.join(root, "Flower", file), image)
         else:
             cv2.imwrite(os.path.join(root, "Unknown", file), image)

@@ -12,7 +12,7 @@ import numpy as np
 
 model = tf.keras.models.load_model("ModelLocal.h5")
 old_author = "Johnny Karate"
-for i in range(100):
+for i in range(50):
     # open 500px and go to the newest photo
     subprocess.Popen("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe https://500px.com/upcoming")
 
@@ -29,7 +29,7 @@ for i in range(100):
         pyautogui.click()
         time.sleep(3)
 
-    for j in range(50):
+    for j in range(75):
         # like this photo
         try:
             pyautogui.moveTo('Button.png')  # Find where heart appears on the screen and click it.

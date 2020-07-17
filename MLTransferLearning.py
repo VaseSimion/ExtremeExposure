@@ -21,7 +21,9 @@ batch_size = 10
 
 print("Getting Data...")
 datagen = ImageDataGenerator(rescale=1./255, # normalize pixel values
-                             validation_split=0.3) # hold back 30% of the images for validation
+                             validation_split=0.3,
+                             horizontal_flip=True,
+                             fill_mode='nearest') # hold back 30% of the images for validation
 
 print("Preparing training dataset...")
 train_generator = datagen.flow_from_directory(
@@ -57,7 +59,7 @@ if start_from_Imnet:
 else:
     # load model saved locally in previous run
     model = tf.keras.models.load_model("ModelLocal.h5")
-    for layer in model.layers[:-1]:
+    for layer in model.layers[:-2]:
         layer.trainable = False
 
 # Compile the model
@@ -68,7 +70,7 @@ model.compile(loss='categorical_crossentropy',
 
 print(model.summary())
 
-num_epochs = 1
+num_epochs = 2
 history = model.fit_generator(
     train_generator,
     steps_per_epoch = train_generator.samples // batch_size,
@@ -93,7 +95,6 @@ x_test = validation_generator[0][0]
 y_test = validation_generator[0][1]
 
 print(len(validation_generator))
-
 class_probabilities = model.predict(x_test)
 predictions = np.argmax(class_probabilities, axis=1)
 true_labels = np.argmax(y_test, axis=1)
@@ -107,3 +108,24 @@ plt.yticks(tick_marks, classes)
 plt.xlabel("Predicted Class")
 plt.ylabel("True Class")
 plt.show()
+
+try:
+    for i in range(5):
+        x_test = validation_generator[i][0]
+        y_test = validation_generator[i][1]
+        print(len(validation_generator))
+        class_probabilities = model.predict(x_test)
+        predictions = np.argmax(class_probabilities, axis=1)
+        true_labels = np.argmax(y_test, axis=1)
+        cm = confusion_matrix(true_labels, predictions)
+
+        plt.imshow(cm, interpolation="nearest", cmap='gray')
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=85)
+        plt.yticks(tick_marks, classes)
+        plt.xlabel("Predicted Class")
+        plt.ylabel("True Class")
+        plt.show()
+except:
+    pass
