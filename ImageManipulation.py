@@ -1,5 +1,6 @@
 import cv2
 import pyautogui
+import numpy as np
 
 
 def get_resized_screenshot():
@@ -55,3 +56,65 @@ def decode(predictions):
         return "Unknown"
     else:
         return "Somehting went wrong"
+
+
+def isHeartRed():
+    pyautogui.screenshot("forinstatemp.png")
+    image = cv2.imread("forinstatemp.png", 0)
+
+    template = cv2.imread('instaHeart.png', 0)
+    w, h = template.shape[::-1]
+
+    res = cv2.matchTemplate(image, template, cv2.TM_CCORR_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    threshold = 0.99
+
+    if max_val > threshold:
+        print("heart is not red")
+        return False
+    else:
+        print("Heart is red")
+        return True
+
+def returnCommentBoxCoordinates():
+    pyautogui.screenshot("forinstatemp.png")
+    image = cv2.imread("forinstatemp.png", 0)
+
+    template = cv2.imread('instaComment.png', 0)
+    w, h = template.shape[::-1]
+
+    res = cv2.matchTemplate(image, template, cv2.TM_CCORR_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    threshold = 0.95
+    if max_val > threshold:
+        x = max_loc[0] + w // 2
+        y = max_loc[1] + h // 2
+
+
+    if x != 9999:
+        #print("Found the box")
+        return [True, x, y]
+    else:
+        #print("No box")
+        return [False, x, y]
+
+def returnPostBoxCoordinates():
+    pyautogui.screenshot("forinstatemp.png")
+    image = cv2.imread("forinstatemp.png", 0)
+
+    template = cv2.imread('instaPost.png', 0)
+    w, h = template.shape[::-1]
+
+    res = cv2.matchTemplate(image, template, cv2.TM_CCORR_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    threshold = 0.95
+    if max_val > threshold:
+        x = max_loc[0] + w // 2
+        y = max_loc[1] + h // 2
+
+    if x != 9999:
+        #print("Found the box")
+        return [True, x, y]
+    else:
+        #print("No box")
+        return [False, x, y]
