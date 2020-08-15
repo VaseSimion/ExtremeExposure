@@ -9,14 +9,18 @@ import clipboard
 #import tensorflow as tf
 import numpy as np
 
-file = ["https://www.instagram.com/explore/tags/travel/", "https://www.instagram.com/explore/tags/backpacking/",
-        "https://www.instagram.com/explore/tags/photography/", "https://www.instagram.com/explore/tags/model/"]
+tags = ["travel", "portrait", "backpacking", "photography", "model", "wonderlust", "fashion", "nikkon",
+        "sony"]
 
 #model = tf.keras.models.load_model("ModelLocal.h5")
 old_author = "Johnny Karate"
-for i in range(20):
+for i in range(50):
+
+    base = "https://www.instagram.com/explore/tags/"
+    file = base + random.choice(tags) + "/"
+
     #open a page out of the file tags list and open a picture
-    subprocess.Popen("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe " + random.choice(file))
+    subprocess.Popen("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe " + file)
     time.sleep(8)
 
     pyautogui.moveTo(x=500, y=489, duration=2)
@@ -36,8 +40,10 @@ for i in range(20):
         pyautogui.click()
         time.sleep(3)
 
-    for iterable in range(12):
+    for iterable in range(20 + int(30*random.random())):
         if Imp.isHeartRed():
+            pyautogui.moveTo(x=1450, y=580, duration=2)
+            pyautogui.click()
             continue
 
         pyautogui.doubleClick(x=800, y=570, duration=2)
@@ -55,7 +61,7 @@ for i in range(20):
 
                 [present, x_post, y_post] = Imp.returnPostBoxCoordinates()
                 pyautogui.moveTo(x=x_post, y=y_post, duration=0.3)
-                time.sleep(1 + random.random())
+                time.sleep(2 + random.random())
                 pyautogui.click()
             else:
                 print("WTF?")
@@ -65,7 +71,7 @@ for i in range(20):
 
         time.sleep(2 + 2*random.random())
     # close the page and wait before the next start of likes
-    #pyautogui.hotkey('ctrl', 'w')  # ctrl-w to clsoe window
+    pyautogui.hotkey('ctrl', 'w')  # ctrl-w to clsoe window
     cv2.imshow("screenshot", Imp.get_resized_screenshot())
     cv2.waitKey(100)
     time.sleep(60 + 60*random.random())

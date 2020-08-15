@@ -53,7 +53,7 @@ for i in range(50):
 
             if author != old_author:
                 # write it
-                pyautogui.scroll(-400)
+                #pyautogui.scroll(-400)
                 time.sleep(1+random.random())
                 pyautogui.moveTo('comment_box.png')  # Find where heart appears on the screen and click it.
                 time.sleep(random.random())
@@ -65,7 +65,7 @@ for i in range(50):
                 time.sleep(random.random())
                 pyautogui.click()
 
-                pyautogui.scroll(500)
+                #pyautogui.scroll(500)
                 time.sleep(random.random())
             else:
                 pyautogui.click(x=850, y=950, duration=1)
