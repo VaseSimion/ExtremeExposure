@@ -4,15 +4,15 @@ def getauthor(url):
     print(url)
     while "by-" in url:
         url = url[url.index("by-")+3:]
-    url = url[:url.index("?")]
+    # url = url[:url.index("?")]
     authorlist = url.split('-')
     temporaryauthorlist=[]
     for name in authorlist:
-        if "%" not in name:
+        if "%" not in name and "null" not in name:
             temporaryauthorlist.append(name)
         author = " ".join(temporaryauthorlist)
     print(author)
-    return author
+    return author.capitalize()
 
 
 def getcomment(topic, author):
