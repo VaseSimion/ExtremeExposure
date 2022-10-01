@@ -46,9 +46,15 @@ for i in range(turns):
             pyautogui.click()
             likedCounter += 1
         except:
-            pyautogui.press('right')  # press the right arrow key
-            pyautogui.moveTo(x=159, y=489, duration=3 + 2 * random.random())
-            continue
+            try:
+                pyautogui.moveTo('UnselectedButton.png')  # Find where heart appears on the screen and click it.
+                time.sleep(random.random())
+                pyautogui.click()
+                likedCounter += 1
+            except:
+                pyautogui.press('right')  # press the right arrow key
+                pyautogui.moveTo(x=159, y=489, duration=3 + 2 * random.random())
+                continue
 
         # write the comment
         if 10*random.random() < 3:
