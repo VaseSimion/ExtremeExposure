@@ -24,9 +24,9 @@ def run_series_of_likes(numberofturns):
     try:
         # login
         user = WebDriverWait(driver, 60).until(ec.presence_of_element_located((By.ID, "emailOrUsername"))). \
-            send_keys("sularea.vasile@gmail.com")
+            send_keys("")
         passfill = WebDriverWait(driver, 60).until(ec.presence_of_element_located((By.ID, "password"))).send_keys(
-            "V15as11E")
+            "")
         driver.find_element(By.XPATH, "//*/div[3]/div/form/button").click()
 
         # wait to be logged in
